@@ -12,21 +12,17 @@ const Dashboard = () => {
 
   const totalBookings = confirmedBookings.length;
   const upcomingTrips = confirmedBookings.filter(b => isFuture(new Date(b.date))).length;
-  const totalRevenue = confirmedBookings.reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
-  const totalAdvances = confirmedBookings.reduce((sum, b) => sum + (Number(b.advanceAmount) || 0), 0);
   
   const todayBookings = confirmedBookings.filter(b => isToday(new Date(b.date)));
 
   const statCards = [
     { title: 'Total Bookings', value: totalBookings, icon: Calendar, color: 'text-primary' },
     { title: 'Upcoming Trips', value: upcomingTrips, icon: TrendingUp, color: 'text-secondary' },
-    { title: 'Total Revenue', value: formatCurrency(totalRevenue), icon: DollarSign, color: 'text-emerald-400' },
-    { title: 'Total Advances', value: formatCurrency(totalAdvances), icon: Wallet, color: 'text-amber-400' },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
         {statCards.map((stat, idx) => (
           <motion.div
             key={stat.title}
