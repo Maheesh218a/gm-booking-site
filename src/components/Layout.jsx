@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Home, CalendarDays, BarChart3, LogOut, Menu } from 'lucide-react';
@@ -8,10 +8,22 @@ const Layout = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [showNav, setShowNav] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleScroll = (e) => {
+    const currentScrollY = e.target.scrollTop;
+    if (currentScrollY > lastScrollY && currentScrollY > 50) {
+      setShowNav(false); // scrolling down
+    } else {
+      setShowNav(true);  // scrolling up
+    }
+    setLastScrollY(currentScrollY);
   };
 
   const navItems = [
@@ -81,13 +93,16 @@ const Layout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 relative z-0">
+        <main 
+          onScroll={handleScroll} 
+          className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 relative z-0"
+        >
           <Outlet />
         </main>
       </div>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 glass border-t border-border/50 pb-safe z-30">
+      <nav className={`md:hidden fixed bottom-0 left-0 right-0 glass border-t border-border/50 pb-safe z-30 transition-transform duration-300 ease-in-out ${showNav ? 'translate-y-0' : 'translate-y-full'}`}>
         <div className="flex justify-around items-center h-16">
           {navItems.map((item) => (
             <NavLink
