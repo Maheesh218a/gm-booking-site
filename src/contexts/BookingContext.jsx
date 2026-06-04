@@ -14,19 +14,10 @@ export const BookingProvider = ({ children }) => {
   useEffect(() => {
     const bookingsRef = collection(db, 'bookings');
     
-    // If it's a demo user, only fetch once so their local additions don't get overwritten by live sync
+    // If it's a demo user, show an empty slate. Do not fetch from Firebase.
     if (user?.role === 'demo') {
-      getDocs(bookingsRef).then((snapshot) => {
-        const bookingsData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setBookings(bookingsData);
-        setLoading(false);
-      }).catch(error => {
-        console.error("Error fetching demo bookings:", error);
-        setLoading(false);
-      });
+      setBookings([]);
+      setLoading(false);
       return; // Return empty cleanup function since there's no listener
     }
 
