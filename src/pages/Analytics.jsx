@@ -51,14 +51,7 @@ const Analytics = () => {
     });
   }, [bookings, searchTerm, dateFilter, vehicleFilter]);
 
-  // Analytics Data Calculation
-  const totalRevenue = filteredBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
-  const totalAdvances = filteredBookings.reduce((sum, b) => sum + (b.advanceAmount || 0), 0);
-  const totalDistance = filteredBookings.reduce((sum, b) => sum + (b.kilometers || 0), 0);
-  const validFuelPrices = filteredBookings.filter(b => b.fuelPricePerLiter > 0);
-  const avgFuelPrice = validFuelPrices.length > 0 
-    ? validFuelPrices.reduce((sum, b) => sum + b.fuelPricePerLiter, 0) / validFuelPrices.length 
-    : 0;
+
 
   // Chart Data: Vehicle Usage
   const vehicleUsageData = [
@@ -192,25 +185,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* Financial Overview Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4 border-l-4 border-primary">
-          <p className="text-xs text-textMuted font-medium">Total Revenue</p>
-          <p className="text-xl font-bold text-text mt-1">{formatCurrency(totalRevenue)}</p>
-        </div>
-        <div className="glass-card p-4 border-l-4 border-emerald-500">
-          <p className="text-xs text-textMuted font-medium">Advances Collected</p>
-          <p className="text-xl font-bold text-text mt-1">{formatCurrency(totalAdvances)}</p>
-        </div>
-        <div className="glass-card p-4 border-l-4 border-rose-500">
-          <p className="text-xs text-textMuted font-medium">Total Distance</p>
-          <p className="text-xl font-bold text-text mt-1">{totalDistance} km</p>
-        </div>
-        <div className="glass-card p-4 border-l-4 border-amber-500">
-          <p className="text-xs text-textMuted font-medium">Avg Fuel Price / L</p>
-          <p className="text-xl font-bold text-text mt-1">{formatCurrency(avgFuelPrice)}</p>
-        </div>
-      </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Charts */}

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { format } from 'date-fns';
 
 const bookingSchema = z.object({
   date: z.string().min(1, 'Date is required'),
@@ -29,7 +30,7 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
   const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
-      date: selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '',
+      date: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
       advanceAmount: '',
       fuelPricePerLiter: '',
       totalAmount: '',
@@ -44,7 +45,7 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
         reset(initialData);
       } else {
         reset({
-          date: selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '',
+          date: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
           advanceAmount: '',
           fuelPricePerLiter: '',
           totalAmount: '',
