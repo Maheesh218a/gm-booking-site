@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-surface/60 backdrop-blur-md border border-border/50;
+  }
+  
+  .glass-card {
+    @apply glass rounded-xl shadow-xl shadow-black/20;
+  }
+
+  /* Custom Scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface hover:bg-border rounded-full;
+  }
+
+  /* Hide number input arrows */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+  }
+}
+
+/* React Big Calendar Overrides for Dark Theme */
+.rbc-calendar {
+  @apply font-sans;
+}
+.rbc-month-view, .rbc-time-view, .rbc-agenda-view {
+  @apply bg-surface/30 border-border rounded-xl overflow-hidden backdrop-blur-sm !important;
+}
+.rbc-header {
+  @apply border-b border-border py-2 text-textMuted font-medium !important;
+}
+.rbc-month-row, .rbc-day-bg {
+  @apply border-border !important;
+}
+.rbc-off-range-bg {
+  @apply bg-background/50 !important;
+}
+.rbc-today {
+  @apply bg-primary/10 !important;
+}
+.rbc-event {
+  @apply rounded border-none shadow-sm !important;
+}
+.rbc-time-content {
+  @apply border-border !important;
+}
+.rbc-timeslot-group {
+  @apply border-border !important;
+}
+.rbc-day-slot .rbc-time-slot {
+  @apply border-border !important;
+}
+.rbc-toolbar button {
+  @apply text-text border-border bg-surface hover:bg-border/80 transition-colors !important;
+}
+.rbc-toolbar button.rbc-active {
+  @apply bg-primary/20 text-primary border-primary/30 !important;
+}
+.rbc-date-cell {
+  @apply text-textMuted p-1 !important;
+}
+.rbc-event-content {
+  @apply text-xs font-medium !important;
+}
