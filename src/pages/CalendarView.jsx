@@ -134,9 +134,13 @@ const CalendarView = () => {
 
   const eventStyleGetter = (event) => {
     let backgroundColor = '#3B82F6'; // Default primary
-    if (event.resource.vehicle === 'NB 8087') backgroundColor = '#3B82F6'; // Blue
-    if (event.resource.vehicle === 'NC 7573') backgroundColor = '#10B981'; // Green
-    if (event.resource.vehicle === 'KX 2422') backgroundColor = '#8B5CF6'; // Purple
+    if (event.resource.status === 'Not Confirmed') {
+      backgroundColor = '#6B7280'; // Gray for unconfirmed
+    } else {
+      if (event.resource.vehicle === 'NB 8087') backgroundColor = '#3B82F6'; // Blue
+      if (event.resource.vehicle === 'NC 7573') backgroundColor = '#10B981'; // Green
+      if (event.resource.vehicle === 'KX 2422') backgroundColor = '#8B5CF6'; // Purple
+    }
 
     return {
       style: {
@@ -172,7 +176,7 @@ const CalendarView = () => {
       </div>
 
       {/* Legend */}
-      <div className="flex space-x-4 mb-2 text-sm text-textMuted">
+      <div className="flex flex-wrap gap-4 mb-2 text-sm text-textMuted">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 rounded-full bg-primary"></div>
           <span>NB 8087</span>
@@ -184,6 +188,10 @@ const CalendarView = () => {
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 rounded-full bg-purple-500"></div>
           <span>KX 2422</span>
+        </div>
+        <div className="flex items-center space-x-2 border-l border-border pl-4">
+          <div className="w-3 h-3 rounded-full bg-gray-500"></div>
+          <span>Not Confirmed</span>
         </div>
       </div>
 

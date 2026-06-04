@@ -18,6 +18,7 @@ const bookingSchema = z.object({
   advanceAmount: z.coerce.number().min(0, 'Advance amount cannot be negative'),
   fuelPricePerLiter: z.coerce.number().min(0, 'Fuel price cannot be negative'),
   kilometers: z.coerce.number().min(1, 'Kilometers must be greater than 0'),
+  status: z.enum(['Confirmed', 'Not Confirmed']),
   notes: z.string().optional(),
 }).refine(data => data.advanceAmount <= data.totalAmount, {
   message: "Advance amount cannot exceed total amount",
@@ -33,6 +34,7 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
       fuelPricePerLiter: '',
       totalAmount: '',
       kilometers: '',
+      status: 'Confirmed',
     }
   });
 
@@ -47,6 +49,7 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
           fuelPricePerLiter: '',
           totalAmount: '',
           kilometers: '',
+          status: 'Confirmed',
         });
       }
     }
@@ -117,8 +120,8 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
                 {errors.time && <p className="text-danger text-xs mt-1">{errors.time.message}</p>}
               </div>
 
-              {/* Vehicle */}
-              <div className="md:col-span-2">
+              {/* Vehicle & Status */}
+              <div>
                 <label className="block text-sm font-medium text-textMuted mb-1">Vehicle *</label>
                 <select {...register('vehicle')} className="w-full p-2 bg-background border border-border rounded-lg text-text focus:ring-2 focus:ring-primary outline-none">
                   <option value="">Select Vehicle</option>
@@ -127,6 +130,14 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
                   <option value="KX 2422">KX 2422 (Car)</option>
                 </select>
                 {errors.vehicle && <p className="text-danger text-xs mt-1">{errors.vehicle.message}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-textMuted mb-1">Booking Status *</label>
+                <select {...register('status')} className="w-full p-2 bg-background border border-border rounded-lg text-text focus:ring-2 focus:ring-primary outline-none">
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Not Confirmed">Not Confirmed</option>
+                </select>
+                {errors.status && <p className="text-danger text-xs mt-1">{errors.status.message}</p>}
               </div>
 
               {/* Customer Info */}

@@ -19,6 +19,9 @@ const Analytics = () => {
   // Filtering Logic
   const filteredBookings = useMemo(() => {
     return bookings.filter(b => {
+      // Exclude unconfirmed bookings from analytics
+      if (b.status === 'Not Confirmed') return false;
+
       // Search text
       const searchMatch = 
         (b.customerName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||

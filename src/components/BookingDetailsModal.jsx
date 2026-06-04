@@ -27,7 +27,16 @@ const BookingDetailsModal = ({ isOpen, onClose, booking, onEdit, onDelete }) => 
           className="relative glass border border-border bg-surface w-full max-w-lg overflow-hidden rounded-2xl shadow-2xl z-10"
         >
           <div className="glass-card rounded-b-none border-b border-border p-4 flex justify-between items-center bg-surface/90">
-            <h2 className="text-xl font-bold text-text">Booking Details</h2>
+            <div className="flex items-center space-x-3">
+              <h2 className="text-xl font-bold text-text">Booking Details</h2>
+              <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
+                booking.status === 'Confirmed' 
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                  : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+              }`}>
+                {booking.status}
+              </span>
+            </div>
             <div className="flex space-x-2">
               <button onClick={() => onEdit(booking)} className="p-2 hover:bg-primary/20 hover:text-primary rounded-full text-textMuted transition-colors">
                 <Edit className="w-5 h-5" />

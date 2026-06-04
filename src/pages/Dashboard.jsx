@@ -8,12 +8,14 @@ import { format, isToday, isFuture } from 'date-fns';
 const Dashboard = () => {
   const { bookings } = useBookings();
 
-  const totalBookings = bookings.length;
-  const upcomingTrips = bookings.filter(b => isFuture(new Date(b.date))).length;
-  const totalRevenue = bookings.reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
-  const totalAdvances = bookings.reduce((sum, b) => sum + (Number(b.advanceAmount) || 0), 0);
+  const confirmedBookings = bookings.filter(b => b.status === 'Confirmed');
+
+  const totalBookings = confirmedBookings.length;
+  const upcomingTrips = confirmedBookings.filter(b => isFuture(new Date(b.date))).length;
+  const totalRevenue = confirmedBookings.reduce((sum, b) => sum + (Number(b.totalAmount) || 0), 0);
+  const totalAdvances = confirmedBookings.reduce((sum, b) => sum + (Number(b.advanceAmount) || 0), 0);
   
-  const todayBookings = bookings.filter(b => isToday(new Date(b.date)));
+  const todayBookings = confirmedBookings.filter(b => isToday(new Date(b.date)));
 
   const statCards = [
     { title: 'Total Bookings', value: totalBookings, icon: Calendar, color: 'text-primary' },
