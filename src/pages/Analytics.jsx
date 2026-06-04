@@ -65,7 +65,7 @@ const Analytics = () => {
     if (filteredBookings.length === 0) return Swal.fire('Oops!', 'No data to export', 'info');
     
     const worksheet = XLSX.utils.json_to_sheet(filteredBookings.map(b => ({
-      Date: b.date,
+      Date: b.startDate === b.endDate ? (b.startDate || b.date) : `${b.startDate || b.date} to ${b.endDate || b.date}`,
       Time: b.time,
       Vehicle: b.vehicle,
       Customer: b.customerName || 'N/A',
@@ -95,7 +95,7 @@ const Analytics = () => {
     filteredBookings.forEach(b => {
       const balance = b.totalAmount - (b.advanceAmount || 0);
       const bookingData = [
-        b.date,
+        b.startDate === b.endDate ? (b.startDate || b.date) : `${b.startDate || b.date} to ${b.endDate || b.date}`,
         b.vehicle,
         b.customerName || 'N/A',
         b.customerPhone,
@@ -254,7 +254,9 @@ const Analytics = () => {
                     const balance = (b.totalAmount || 0) - (b.advanceAmount || 0);
                     return (
                       <tr key={b.id} className="border-b border-border/30 hover:bg-surface/30 transition-colors">
-                        <td className="px-4 py-3 font-medium text-text whitespace-nowrap">{b.date}</td>
+                        <td className="px-4 py-3 font-medium text-text whitespace-nowrap">
+                          {b.startDate === b.endDate ? (b.startDate || b.date) : `${b.startDate || b.date} to ${b.endDate || b.date}`}
+                        </td>
                         <td className="px-4 py-3 whitespace-nowrap">
                           <span className={`px-2 py-1 rounded-md text-xs border ${
                             b.vehicle === 'NB 8087' ? 'bg-primary/10 text-primary border-primary/20' :

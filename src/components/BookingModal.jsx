@@ -4,10 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 
 const bookingSchema = z.object({
-  date: z.string().min(1, 'Date is required'),
+  startDate: z.string().min(1, 'Start Date is required'),
+  endDate: z.string().min(1, 'End Date is required'),
   time: z.string().min(1, 'Time is required'),
   startLocation: z.string().min(1, 'Start location is required'),
   route: z.string().min(1, 'Route is required'),
@@ -24,13 +25,17 @@ const bookingSchema = z.object({
 }).refine(data => data.advanceAmount <= data.totalAmount, {
   message: "Advance amount cannot exceed total amount",
   path: ["advanceAmount"],
+}).refine(data => new Date(data.endDate) >= new Date(data.startDate), {
+  message: "End Date cannot be before Start Date",
+  path: ["endDate"],
 });
 
 const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) => {
   const { register, handleSubmit, reset, setValue, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
-      date: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
+      startDate: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
+      endDate: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
       advanceAmount: '',
       fuelPricePerLiter: '',
       totalAmount: '',
@@ -45,7 +50,8 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
         reset(initialData);
       } else {
         reset({
-          date: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
+          startDate: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
+          endDate: selectedDate ? format(new Date(selectedDate), 'yyyy-MM-dd') : '',
           advanceAmount: '',
           fuelPricePerLiter: '',
           totalAmount: '',
@@ -64,6 +70,13 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
   const total = watch('totalAmount') || 0;
   const advance = watch('advanceAmount') || 0;
   const balance = total - advance;
+
+  const wStart = watch('startDate');
+  const wEnd = watch('endDate');
+  let tripDays = 0;
+  if (wStart && wEnd && new Date(wEnd) >= new Date(wStart)) {
+    tripDays = differenceInDays(new Date(wEnd), new Date(wStart)) + 1;
+  }
 
   const preventNegative = (e) => {
     if (e.key === '-' || e.key === 'e' || e.key === '+') {
@@ -111,9 +124,17 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Date & Time */}
               <div>
-                <label className="block text-sm font-medium text-textMuted mb-1">Date *</label>
-                <input type="date" {...register('date')} className="w-full p-2 bg-background border border-border rounded-lg text-text focus:ring-2 focus:ring-primary outline-none" />
-                {errors.date && <p className="text-danger text-xs mt-1">{errors.date.message}</p>}
+                <label className="block text-sm font-medium text-textMuted mb-1">Start Date *</label>
+                <input type="date" {...register('startDate')} className="w-full p-2 bg-background border border-border rounded-lg text-text focus:ring-2 focus:ring-primary outline-none" />
+                {errors.startDate && <p className="text-danger text-xs mt-1">{errors.startDate.message}</p>}
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-sm font-medium text-textMuted">End Date *</label>
+                  {tripDays > 0 && <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">{tripDays} {tripDays === 1 ? 'Day' : 'Days'} Trip</span>}
+                </div>
+                <input type="date" {...register('endDate')} className="w-full p-2 bg-background border border-border rounded-lg text-text focus:ring-2 focus:ring-primary outline-none" />
+                {errors.endDate && <p className="text-danger text-xs mt-1">{errors.endDate.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-textMuted mb-1">Departure Time *</label>

@@ -31,11 +31,17 @@ const CalendarView = () => {
 
   const events = useMemo(() => {
     return bookings.map(b => {
-      // Parse the date and time to create a Date object for the calendar
-      const [year, month, day] = b.date.split('-');
-      const [hours, minutes] = b.time.split(':');
-      const start = new Date(year, month - 1, day, hours, minutes);
-      const end = new Date(year, month - 1, day, parseInt(hours) + 2, minutes); // Assuming 2 hours default duration for visualization
+      // Use startDate or fallback to date for older records
+      const startStr = b.startDate || b.date;
+      const endStr = b.endDate || b.date;
+      
+      const [sYear, sMonth, sDay] = startStr.split('-');
+      const [hours, minutes] = (b.time || '00:00').split(':');
+      const start = new Date(sYear, sMonth - 1, sDay, hours, minutes);
+
+      const [eYear, eMonth, eDay] = endStr.split('-');
+      // Set end time to end of day so it visually spans across the full end date
+      const end = new Date(eYear, eMonth - 1, eDay, 23, 59, 59);
 
       return {
         id: b.id,

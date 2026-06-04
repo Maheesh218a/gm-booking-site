@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Edit, Trash2, MapPin, Clock, Phone, Car, FileText, CreditCard } from 'lucide-react';
 import { formatCurrency } from '../lib/utils';
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 
 const BookingDetailsModal = ({ isOpen, onClose, booking, onEdit, onDelete }) => {
   if (!isOpen || !booking) return null;
@@ -57,7 +57,12 @@ const BookingDetailsModal = ({ isOpen, onClose, booking, onEdit, onDelete }) => 
               </div>
               <div>
                 <p className="text-lg font-bold text-text">{booking.vehicle}</p>
-                <p className="text-sm text-textMuted">{format(new Date(booking.date), 'PPPP')} at {booking.time}</p>
+                <p className="text-sm text-textMuted">
+                  {booking.startDate === booking.endDate || (!booking.startDate && !booking.endDate)
+                    ? `${format(new Date(booking.startDate || booking.date), 'PPPP')} at ${booking.time}` 
+                    : `${format(new Date(booking.startDate || booking.date), 'MMM d, yyyy')} - ${format(new Date(booking.endDate || booking.date), 'MMM d, yyyy')} (${differenceInDays(new Date(booking.endDate || booking.date), new Date(booking.startDate || booking.date)) + 1} Days) at ${booking.time}`
+                  }
+                </p>
               </div>
             </div>
 

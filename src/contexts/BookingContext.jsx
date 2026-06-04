@@ -25,22 +25,25 @@ export const BookingProvider = ({ children }) => {
     localStorage.setItem('gm_bookings', JSON.stringify(newBookings));
   };
 
-  const checkConflict = (vehicle, date, newBookingId = null) => {
-    // Basic date conflict check. A robust system would check time overlaps too.
-    // For simplicity, we assume one booking per vehicle per day, or check overlapping times if needed.
-    // Let's just check if there's any booking for the exact same vehicle on the same date.
-    const bookingDateStr = new Date(date).toISOString().split('T')[0];
+  const checkConflict = (vehicle, startDate, endDate, newBookingId = null) => {
+    // Check if the new date range overlaps with any existing booking for the same vehicle
+    const newStart = new Date(startDate);
+    const newEnd = new Date(endDate);
     
     return bookings.some(b => {
       if (newBookingId && b.id === newBookingId) return false;
       if (b.vehicle !== vehicle) return false;
-      const bDateStr = new Date(b.date).toISOString().split('T')[0];
-      return bDateStr === bookingDateStr;
+      
+      const bStart = new Date(b.startDate || b.date);
+      const bEnd = new Date(b.endDate || b.date);
+      
+      // Two ranges overlap if: start1 <= end2 AND end1 >= start2
+      return (newStart <= bEnd && newEnd >= bStart);
     });
   };
 
   const addBooking = (bookingData) => {
-    if (checkConflict(bookingData.vehicle, bookingData.date)) {
+    if (checkConflict(bookingData.vehicle, bookingData.startDate || bookingData.date, bookingData.endDate || bookingData.date)) {
       Swal.fire({
         icon: 'error',
         title: 'Conflict Detected',
@@ -61,7 +64,7 @@ export const BookingProvider = ({ children }) => {
   };
 
   const updateBooking = (id, updatedData) => {
-    if (checkConflict(updatedData.vehicle, updatedData.date, id)) {
+    if (checkConflict(updatedData.vehicle, updatedData.startDate || updatedData.date, updatedData.endDate || updatedData.date, id)) {
       Swal.fire({
         icon: 'error',
         title: 'Conflict Detected',

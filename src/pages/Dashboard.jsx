@@ -3,7 +3,7 @@ import { useBookings } from '../contexts/BookingContext';
 import { formatCurrency } from '../lib/utils';
 import { motion } from 'framer-motion';
 import { Calendar, TrendingUp, DollarSign, Wallet } from 'lucide-react';
-import { format, isToday, isFuture } from 'date-fns';
+import { format, isToday, isFuture, startOfDay, endOfDay } from 'date-fns';
 
 const Dashboard = () => {
   const { bookings } = useBookings();
@@ -11,9 +11,17 @@ const Dashboard = () => {
   const confirmedBookings = bookings.filter(b => b.status === 'Confirmed');
 
   const totalBookings = confirmedBookings.length;
-  const upcomingTrips = confirmedBookings.filter(b => isFuture(new Date(b.date))).length;
+  const upcomingTrips = confirmedBookings.filter(b => {
+    const bStart = new Date(b.startDate || b.date);
+    return isFuture(startOfDay(bStart));
+  }).length;
   
-  const todayBookings = confirmedBookings.filter(b => isToday(new Date(b.date)));
+  const todayBookings = confirmedBookings.filter(b => {
+    const bStart = new Date(b.startDate || b.date);
+    const bEnd = new Date(b.endDate || b.date);
+    const today = new Date();
+    return (today >= startOfDay(bStart) && today <= endOfDay(bEnd));
+  });
 
   const statCards = [
     { title: 'Total Bookings', value: totalBookings, icon: Calendar, color: 'text-primary' },
