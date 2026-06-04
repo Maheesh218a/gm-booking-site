@@ -65,10 +65,10 @@ const CalendarView = () => {
     setIsDetailsOpen(true);
   };
 
-  const handleSaveBooking = (data, id) => {
+  const handleSaveBooking = async (data, id) => {
     let success = false;
     if (modalMode === 'add') {
-      success = addBooking(data);
+      success = await addBooking(data);
       if (success) {
         Swal.fire({
           icon: 'success',
@@ -78,12 +78,10 @@ const CalendarView = () => {
           color: '#F3F4F6',
           timer: 1500,
           showConfirmButton: false,
-        }).then(() => {
-          window.location.reload();
         });
       }
     } else {
-      success = updateBooking(id, data);
+      success = await updateBooking(id, data);
       if (success) {
         Swal.fire({
           icon: 'success',
@@ -93,8 +91,6 @@ const CalendarView = () => {
           color: '#F3F4F6',
           timer: 1500,
           showConfirmButton: false,
-        }).then(() => {
-          window.location.reload();
         });
         // Update details view if it was open from edit
         setSelectedBooking({ ...selectedBooking, ...data });
@@ -114,9 +110,9 @@ const CalendarView = () => {
       confirmButtonText: 'Yes, delete it!',
       background: '#151C2C',
       color: '#F3F4F6',
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        deleteBooking(id);
+        await deleteBooking(id);
         setIsDetailsOpen(false);
         Swal.fire({
           icon: 'success',

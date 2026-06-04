@@ -62,8 +62,8 @@ const BookingModal = ({ isOpen, onClose, onSave, initialData, selectedDate }) =>
     }
   }, [isOpen, initialData, selectedDate, reset]);
 
-  const onSubmit = (data) => {
-    const success = onSave(data, initialData?.id);
+  const onSubmit = async (data) => {
+    const success = await onSave(data, initialData?.id);
     if (success) onClose();
   };
 
