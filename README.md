@@ -2,6 +2,17 @@
 
 A comprehensive, mobile-first booking management system designed specifically for GM Super Service Matale. This application streamlines vehicle scheduling, financial tracking, and operational analytics with a secure, modern, dark-themed dashboard.
 
+## 🌐 Live Demo
+
+**Project Link:** [https://gm-booking-site.vercel.app/](https://gm-booking-site.vercel.app/)
+
+### Testing Access (Demo Mode)
+To explore the system without affecting the real database, you can log in using the following sample credentials. In Demo Mode, your changes are saved only to your local screen and will reset upon refreshing the page. The real company data is hidden and protected from sample users.
+
+- **Email:** `sample@gmail.com`
+- **Password:** `sample`
+
+
 ## 🚀 Features
 
 - **Secure Authentication:** Protected routes with a robust login portal and "Remember Me" functionality.
@@ -10,7 +21,8 @@ A comprehensive, mobile-first booking management system designed specifically fo
 - **Financial Analytics:** Real-time dashboard and charts tracking Total Revenue, Advances, Balance, Total Distance, and Average Fuel Price.
 - **Export Capabilities:** Instantly generate and download professional PDF reports or Excel spreadsheets of your booking history.
 - **Mobile-First Design:** Fully responsive layout with bottom navigation for mobile phones and a sleek sidebar for desktops.
-- **Local Persistence:** All bookings and user sessions are securely stored in the browser's Local Storage.
+- **Cloud Sync:** Integrated with Google Firebase Firestore for real-time multi-device database syncing.
+- **Demo Sandbox Mode:** Secure sample logins that run entirely in isolated local environments, keeping the real database untouched.
 
 ## 🛠 Technology Stack
 
