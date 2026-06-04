@@ -22,6 +22,15 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return true;
     }
+    
+    // Demo Mode Credentials
+    if (email === 'sample@gmail.com' && password === 'sample') {
+      const userData = { email, name: 'Demo Guest', role: 'demo' };
+      localStorage.setItem('gm_user', JSON.stringify(userData));
+      setUser(userData);
+      return true;
+    }
+    
     return false;
   };
 

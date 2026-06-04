@@ -1,18 +1,36 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { useAuth } from './AuthContext';
 
 const BookingContext = createContext();
 
 export const BookingProvider = ({ children }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const bookingsRef = collection(db, 'bookings');
     
-    // Set up real-time listener
+    // If it's a demo user, only fetch once so their local additions don't get overwritten by live sync
+    if (user?.role === 'demo') {
+      getDocs(bookingsRef).then((snapshot) => {
+        const bookingsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setBookings(bookingsData);
+        setLoading(false);
+      }).catch(error => {
+        console.error("Error fetching demo bookings:", error);
+        setLoading(false);
+      });
+      return; // Return empty cleanup function since there's no listener
+    }
+
+    // Set up real-time listener for real owners
     const unsubscribe = onSnapshot(bookingsRef, (snapshot) => {
       const bookingsData = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -27,7 +45,7 @@ export const BookingProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]); // Re-run if user changes
 
   const checkConflict = (vehicle, startDate, endDate, newBookingId = null) => {
     const newStart = new Date(startDate);
@@ -56,11 +74,20 @@ export const BookingProvider = ({ children }) => {
       return false;
     }
 
+    const newBooking = {
+      ...bookingData,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (user?.role === 'demo') {
+      // Local save only for demo mode
+      newBooking.id = 'demo-' + Date.now();
+      setBookings(prev => [...prev, newBooking]);
+      Swal.fire({ icon: 'info', title: 'Demo Mode', text: 'Saved locally (Not synced to cloud)', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false, background: '#151C2C', color: '#60A5FA' });
+      return true;
+    }
+
     try {
-      const newBooking = {
-        ...bookingData,
-        createdAt: new Date().toISOString(),
-      };
       await addDoc(collection(db, 'bookings'), newBooking);
       return true;
     } catch (error) {
@@ -82,6 +109,13 @@ export const BookingProvider = ({ children }) => {
       return false;
     }
 
+    if (user?.role === 'demo') {
+      // Local save only for demo mode
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, ...updatedData } : b));
+      Swal.fire({ icon: 'info', title: 'Demo Mode', text: 'Updated locally (Not synced to cloud)', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false, background: '#151C2C', color: '#60A5FA' });
+      return true;
+    }
+
     try {
       const bookingRef = doc(db, 'bookings', id);
       await updateDoc(bookingRef, updatedData);
@@ -94,6 +128,13 @@ export const BookingProvider = ({ children }) => {
   };
 
   const deleteBooking = async (id) => {
+    if (user?.role === 'demo') {
+      // Local delete only for demo mode
+      setBookings(prev => prev.filter(b => b.id !== id));
+      Swal.fire({ icon: 'info', title: 'Demo Mode', text: 'Deleted locally (Not synced to cloud)', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false, background: '#151C2C', color: '#60A5FA' });
+      return true;
+    }
+
     try {
       await deleteDoc(doc(db, 'bookings', id));
       return true;
